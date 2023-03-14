@@ -5,9 +5,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.sun.net.ssl.SSLPermission;
 
 import java.util.Random;
 
@@ -48,17 +51,23 @@ public class MyGdxGame2 extends ApplicationAdapter {
     boolean stoitlevo = false;
     boolean jump = false;
     boolean jumpUp = false;
-
+    int live;
     int kadr = 0;
-
+    int k = 160;
+    int m = 200;
+    int n_guk = 50;
+    BitmapFont text;
     @Override
     public void create() {
         batch = new SpriteBatch(); // создаём объект, отвечающий за вывод изображений
+        text = new  BitmapFont();
+        text.setColor(Color.BLACK);
         img = new Texture("Ded1.png");
+        imgBackGroundTrava = new Texture("Fon_c_travoi.jpg");
         imgChelovecStoitPravo = new Texture("Chelovek_Stoit_pravo.png");
         imgChelovecStoitLevo = new Texture("Chelovek_Stoit_levo.png");
         // TODO по аналогии создать imgJump = new Textere ("")
-
+        live = 3;
         imgChelovecPravo = new Texture[]{
                 new Texture("Chelovek_Begit_pravo1.png"),
                 new Texture("Chelovek_Begit_pravo2.png"),
@@ -84,8 +93,6 @@ public class MyGdxGame2 extends ApplicationAdapter {
 
     };
 
-
-        imgBackGroundTrava = new Texture("Fon_c_travoi.jpg");
         scrWidth = ScreenUtils.getFrameBufferTexture().getRegionWidth();
         scrHeight = ScreenUtils.getFrameBufferTexture().getRegionHeight();
         easyTimer = new EasyTimer();
@@ -97,9 +104,19 @@ public class MyGdxGame2 extends ApplicationAdapter {
 
     @Override
     public void render() {
+        ScreenUtils.clear(1, 0, 0, 1);
         batch.begin();
+        if (x + k >= nasecomie.getX() && (nasecomie.getX() + n_guk) >=  x && (y + m) >= nasecomie.getY()) {
+            nasecomie = new Nasecomie(scrWidth, scrHeight);
+            batch.draw(imgBackGroundNasecomoe[0],nasecomie.getX(), nasecomie.getY());
+        }
         batch.draw(imgBackGroundTrava, 0, 0);
+        System.out.println("X:\t" + nasecomie.getX() + "\t" + x);
+        System.out.println("Y:\t" + nasecomie.getY() + "\t" + y);
+        if (nasecomie.getX() - x <= 7 && nasecomie.getY() - y <= 10){
+            live -=1;
 
+        }
         batch.draw(imgBackGroundNasecomoe[0],nasecomie.getX(), nasecomie.getY());
         nasecomie.fly();
 
@@ -158,7 +175,7 @@ public class MyGdxGame2 extends ApplicationAdapter {
             }
         }
 
-        ScreenUtils.clear(0.65f, 0.99f, 0f, 0);
+//        ScreenUtils.clear(0.65f, 0.99f, 0f, 0);
 
         if (levo) { // && !jump && !jumpUp
             batch.draw(imgChelovecLevo[kadr], x, y);
@@ -202,6 +219,8 @@ public class MyGdxGame2 extends ApplicationAdapter {
                 }
             }
         }
+        String live_str = "Score: " + live;
+        text.draw(batch, live_str ,100f, 1000f);
         batch.end();
     }
 
@@ -222,5 +241,5 @@ public class MyGdxGame2 extends ApplicationAdapter {
     public EasyTimer getEasyTimer() {
         return easyTimer;
     }
-}
 
+}
