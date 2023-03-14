@@ -51,23 +51,26 @@ public class MyGdxGame2 extends ApplicationAdapter {
     boolean stoitlevo = false;
     boolean jump = false;
     boolean jumpUp = false;
-    int live;
+    int life;
     int kadr = 0;
     int k = 160;
     int m = 200;
     int n_guk = 50;
+    int count = 10;
+    Nasecomie [] nas_mas  = new Nasecomie[count];
+
     BitmapFont text;
     @Override
     public void create() {
         batch = new SpriteBatch(); // создаём объект, отвечающий за вывод изображений
         text = new  BitmapFont();
-        text.setColor(Color.BLACK);
+        text.setColor(Color.CORAL);
         img = new Texture("Ded1.png");
         imgBackGroundTrava = new Texture("Fon_c_travoi.jpg");
         imgChelovecStoitPravo = new Texture("Chelovek_Stoit_pravo.png");
         imgChelovecStoitLevo = new Texture("Chelovek_Stoit_levo.png");
         // TODO по аналогии создать imgJump = new Textere ("")
-        live = 3;
+        life = 3;
         imgChelovecPravo = new Texture[]{
                 new Texture("Chelovek_Begit_pravo1.png"),
                 new Texture("Chelovek_Begit_pravo2.png"),
@@ -106,17 +109,20 @@ public class MyGdxGame2 extends ApplicationAdapter {
     public void render() {
         ScreenUtils.clear(1, 0, 0, 1);
         batch.begin();
+        if (nasecomie.getY() <= 5){
+            nasecomie = new Nasecomie(scrWidth, scrHeight);
+            batch.draw(imgBackGroundNasecomoe[0],nasecomie.getX(), nasecomie.getY());
+            timer.startTimer();
+        }
         if (x + k >= nasecomie.getX() && (nasecomie.getX() + n_guk) >=  x && (y + m) >= nasecomie.getY()) {
             nasecomie = new Nasecomie(scrWidth, scrHeight);
             batch.draw(imgBackGroundNasecomoe[0],nasecomie.getX(), nasecomie.getY());
+            timer.startTimer();
+            life--;
         }
-        batch.draw(imgBackGroundTrava, 0, 0);
-        System.out.println("X:\t" + nasecomie.getX() + "\t" + x);
-        System.out.println("Y:\t" + nasecomie.getY() + "\t" + y);
-        if (nasecomie.getX() - x <= 7 && nasecomie.getY() - y <= 10){
-            live -=1;
 
-        }
+        batch.draw(imgBackGroundTrava, 0, 0);
+
         batch.draw(imgBackGroundNasecomoe[0],nasecomie.getX(), nasecomie.getY());
         nasecomie.fly();
 
@@ -125,12 +131,10 @@ public class MyGdxGame2 extends ApplicationAdapter {
             timer.startTimer();
         }
 
-//        if(Gdx.input.isKeyPressed(Input.Keys.W) && y < scrHeight - img.getHeight()) {
-//            y+=10;
-//        }
-//        if(Gdx.input.isKeyPressed(Input.Keys.S) && y >= 0) {
-//            y-=10;
-//        }
+        if (life <= 0) {
+            Gdx.app.exit();
+        }
+
         if (Gdx.input.isKeyPressed(Input.Keys.A) && x >= 0) {
             x -= 3;
             levo = true;
@@ -175,8 +179,6 @@ public class MyGdxGame2 extends ApplicationAdapter {
             }
         }
 
-//        ScreenUtils.clear(0.65f, 0.99f, 0f, 0);
-
         if (levo) { // && !jump && !jumpUp
             batch.draw(imgChelovecLevo[kadr], x, y);
         } else if (pravo) { // && !jump && !jumpUp
@@ -219,8 +221,8 @@ public class MyGdxGame2 extends ApplicationAdapter {
                 }
             }
         }
-        String live_str = "Score: " + live;
-        text.draw(batch, live_str ,100f, 1000f);
+        String life_str = "Score: " + life;
+        text.draw(batch, life_str ,100f, 1000f);
         batch.end();
     }
 
