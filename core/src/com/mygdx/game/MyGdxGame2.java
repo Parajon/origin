@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.sun.net.ssl.SSLPermission;
 
@@ -31,7 +32,6 @@ public class MyGdxGame2 extends ApplicationAdapter {
     Texture img;
     Texture imgBackGroundTrava; // фон
     Texture[] imgBackGroundNasecomoe;
-    EasyTimer timer;
     float scrWidth;
     float scrHeight;
     float x = 0;
@@ -57,7 +57,10 @@ public class MyGdxGame2 extends ApplicationAdapter {
     int m = 200;
     int n_guk = 50;
     int count = 10;
+    EasyTimer [] timer = new EasyTimer[count];
     Nasecomie [] nas_mas  = new Nasecomie[count];
+
+
 
     BitmapFont text;
     @Override
@@ -99,36 +102,38 @@ public class MyGdxGame2 extends ApplicationAdapter {
         scrWidth = ScreenUtils.getFrameBufferTexture().getRegionWidth();
         scrHeight = ScreenUtils.getFrameBufferTexture().getRegionHeight();
         easyTimer = new EasyTimer();
-        timer = new EasyTimer();
         easyTimer.startTimer();
-        timer.startTimer();
-        nasecomie = new Nasecomie(scrWidth, scrHeight);
+//        timer.startTimer();
+        for (int i=0; i < nas_mas.length; i++) {
+            nas_mas[i] = new Nasecomie(scrWidth, scrHeight);
+            timer[i] = new EasyTimer();
+            timer[i].startTimer();
+        }
     }
 
     @Override
     public void render() {
         ScreenUtils.clear(1, 0, 0, 1);
         batch.begin();
-        if (nasecomie.getY() <= 5){
-            nasecomie = new Nasecomie(scrWidth, scrHeight);
-            batch.draw(imgBackGroundNasecomoe[0],nasecomie.getX(), nasecomie.getY());
-            timer.startTimer();
-        }
-        if (x + k >= nasecomie.getX() && (nasecomie.getX() + n_guk) >=  x && (y + m) >= nasecomie.getY()) {
-            nasecomie = new Nasecomie(scrWidth, scrHeight);
-            batch.draw(imgBackGroundNasecomoe[0],nasecomie.getX(), nasecomie.getY());
-            timer.startTimer();
-            life--;
-        }
-
         batch.draw(imgBackGroundTrava, 0, 0);
-
-        batch.draw(imgBackGroundNasecomoe[0],nasecomie.getX(), nasecomie.getY());
-        nasecomie.fly();
-
-        if (timer.timerDelay(1)) {
-            nasecomie.setVy(0.2f);
-            timer.startTimer();
+        for (int i=0; i < nas_mas.length; i++) {
+            if (nas_mas[i].getY() <= 5){
+                nas_mas[i].restart();
+                batch.draw(imgBackGroundNasecomoe[0],nas_mas[i].getX(), nas_mas[i].getY());
+                timer[i].startTimer();
+            }
+            if (x + k >= nas_mas[i].getX() && (nas_mas[i].getX() + n_guk) >=  x && (y + m) >= nas_mas[i].getY()) {
+                nas_mas[i].restart();
+                batch.draw(imgBackGroundNasecomoe[0],nas_mas[i].getX(), nas_mas[i].getY());
+                timer[i].startTimer();
+                life--;
+            }
+            batch.draw(imgBackGroundNasecomoe[0],nas_mas[i].getX(), nas_mas[i].getY());
+            nas_mas[i].fly();
+            if (timer[i].timerDelay(1)) {
+                nas_mas[i].setVy(0.2f);
+                timer[i].startTimer();
+            }
         }
 
         if (life <= 0) {
